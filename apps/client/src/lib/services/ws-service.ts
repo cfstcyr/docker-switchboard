@@ -1,6 +1,6 @@
 import type { DockerContainer } from "../types/docker";
-import { EventListener, type EventListenerCallbackWithoutEvent } from "../utils/event-listener";
 import { SingletonBase } from "../utils/singleton";
+import { EventsSubject, type SubjectCallback } from "../utils/subject";
 
 interface WebSocketEvents {
     containers: DockerContainer[];
@@ -13,7 +13,7 @@ enum WebSocketStatus {
 }
 
 export class WebSocketService extends SingletonBase<WebSocketService>() {
-    private eventListener: EventListener<WebSocketEvents> = new EventListener<WebSocketEvents>();
+    private eventsSubject = new EventsSubject<WebSocketEvents>();
     private status: WebSocketStatus = WebSocketStatus.CLOSED;
     private ws: WebSocket | null = null;
 
@@ -47,7 +47,7 @@ export class WebSocketService extends SingletonBase<WebSocketService>() {
 
             if (message) {
                 console.debug("WebSocket event received: ", message.eventName, message.eventData);
-                this.eventListener.emit(message.eventName, message.eventData);
+                this.eventsSubject.emit(message.eventName, message.eventData);
             }
         };
 
@@ -58,12 +58,12 @@ export class WebSocketService extends SingletonBase<WebSocketService>() {
         };
     }
 
-    subscribe(event: keyof WebSocketEvents, callback: EventListenerCallbackWithoutEvent<WebSocketEvents>) {
-        this.eventListener.subscribeToEvent(event, callback);
+    subscribe<K extends keyof WebSocketEvents>(event: K, callback: SubjectCallback<WebSocketEvents[K]>) {
+        this.eventsSubject.subscribe(event, callback);
     }
 
-    unsubscribe(event: keyof WebSocketEvents, callback: EventListenerCallbackWithoutEvent<WebSocketEvents>) {
-        this.eventListener.unsubscribeFromEvent(event, callback);
+    unsubscribe<K extends keyof WebSocketEvents>(event: K, callback: SubjectCallback<WebSocketEvents[K]>) {
+        this.eventsSubject.unsubscribe(event, callback);
     }
 
     private parseWebSocketMessage(event: MessageEvent) {

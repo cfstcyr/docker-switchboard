@@ -1,1 +1,50 @@
 @import "tailwindcss";
+
+:root {
+  --primary: oklch(39.1% 0.09 240.876);
+  --background: oklch(21% 0.034 264.665);
+  --text: oklch(98.5% 0.002 247.839);
+  --card: oklch(98.5% 0.002 247.839);
+}
+
+@theme {
+  --color-primary: var(--primary);
+  --color-background: var(--background);
+  --color-text: var(--text);
+  --color-card: var(--card);
+}
+
+html, body {
+  @apply text-text;
+}
+
+button {
+  cursor: pointer;
+}
+
+@utility noise {
+    background-image: url('/noise.svg');
+    background-size: 75px 75px;
+    background-repeat: repeat;
+    background-position: 0 0;
+    opacity: 0.45;
+}
+
+.background-gradient {
+  background: radial-gradient(
+    circle at 50% -20%,
+    --theme(--color-primary / 70%) 0%,
+    --theme(--color-primary / 30%) 25%,
+    --theme(--color-primary / 5%) 50%,
+    transparent 75%
+  );
+}
+
+@import './utils/glass.css';
+
+.container-item {
+  @apply glass grid grid-cols-[auto_1fr_auto] gap-x-4 gap-y-0.5 p-4 items-center rounded-lg;
+  grid-template-areas:
+    "status title actions"
+    "none subtitle actions";
+}

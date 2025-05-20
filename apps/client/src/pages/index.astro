@@ -1,10 +1,10 @@
 ---
-import ContainersList from "@/components/docker/containers-list.astro"
+import { ContainersList } from "@/components/docker/containers-list"
 import Layout from "../layouts/layout.astro"
 ---
 
 <Layout>
-	<ContainersList />
+	<ContainersList client:load />
 </Layout>
 
 <script>

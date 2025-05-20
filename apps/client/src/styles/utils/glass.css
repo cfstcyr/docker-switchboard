@@ -1,0 +1,26 @@
+@utility glass-base {
+    @apply rounded-lg backdrop-blur-lg border border-card/10;
+    background: linear-gradient(
+        45deg,
+        var(--glass-bg) 0%,
+        var(--glass-bg-center) 50%,
+        var(--glass-bg) 100%
+    );
+    box-shadow:
+        inset 0 1px 2px 1px --theme(--color-card / 7.5%),
+        0 1px 2px 0 --theme(--color-background / 15%),
+        0 2px 4px 0 --theme(--color-background / 5%)
+        ;
+}
+
+@utility glass {
+    @apply glass-base;
+    --glass-bg: --theme(--color-card / 7%);
+    --glass-bg-center: --theme(--color-card / 10%);
+}
+
+@utility glass {
+    @apply rounded-md backdrop-blur-md;
+    --glass-bg: --theme(--color-card / 3%);
+    --glass-bg-center: --theme(--color-card / 7%);
+}
