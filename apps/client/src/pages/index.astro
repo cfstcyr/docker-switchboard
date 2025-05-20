@@ -1,0 +1,14 @@
+---
+import ContainersList from "@/components/docker/containers-list.astro"
+import Layout from "../layouts/layout.astro"
+---
+
+<Layout>
+	<ContainersList />
+</Layout>
+
+<script>
+    import { WebSocketService } from '@/lib/services/ws-service';
+    
+    WebSocketService.instance.init()
+</script>
