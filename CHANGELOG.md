@@ -1,3 +1,15 @@
+# [1.1.0](https://github.com/cfstcyr/docker-switchboard/compare/v1.0.1...v1.1.0) (2025-05-24)
+
+
+### Bug Fixes
+
+* update docker containers layout ([993e9da](https://github.com/cfstcyr/docker-switchboard/commit/993e9da872942c9021300d35ce25e474b590f2aa))
+
+
+### Features
+
+* implement application configuration loading and container filtering ([599d0c6](https://github.com/cfstcyr/docker-switchboard/commit/599d0c663e00a4ee5d41ec0a1de92a8d56c88175))
+
 ## [1.0.1](https://github.com/cfstcyr/docker-switchboard/compare/v1.0.0...v1.0.1) (2025-05-24)
 
 
