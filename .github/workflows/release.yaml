@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,3 +21,32 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
+
+      - name: Get latest tag
+        id: get_version
+        run: echo "version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+
+  docker:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    needs: release
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/docker-switchboard:${{ needs.release.outputs.version }},${{ secrets.DOCKER_HUB_USERNAME }}/docker-switchboard:latest
