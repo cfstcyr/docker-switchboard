@@ -4,14 +4,13 @@ WORKDIR /app
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-ENV VITE_API_URL="/api"
 RUN corepack enable
 
 COPY ./apps/client/package.json ./apps/client/pnpm-lock.yaml ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 COPY ./apps/client/ ./
-RUN pnpm run build
+RUN PUBLIC_API_URL="/api" pnpm run build
 
 
 FROM golang:1.24.3-alpine AS builder

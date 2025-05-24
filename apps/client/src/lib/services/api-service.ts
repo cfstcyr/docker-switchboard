@@ -6,7 +6,7 @@ export class APIService extends SingletonBase<APIService>() {
     private constructor() {
         super()
         this.baseUrl =
-            import.meta.env.VITE_API_URL || 'http://localhost:8080/api'
+            import.meta.env.PUBLIC_API_URL ?? 'http://localhost:8080/api'
     }
 
     url(input: string) {
