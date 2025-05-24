@@ -2,6 +2,7 @@
 
 <p align="center">
     <a href="https://github.com/cfstcyr/docker-switchboard/releases" alt="Github Release"><img src="https://img.shields.io/github/v/release/cfstcyr/docker-switchboard?logo=github" /></a>
+    <a href="https://github.com/cfstcyr/docker-switchboard/releases" alt="Github Release"><img src="https://img.shields.io/github/release-date/cfstcyr/docker-switchboard?logo=github" /></a>
     <a href="https://hub.docker.com/r/cfstcyr/docker-switchboard">
         <img src="https://img.shields.io/docker/v/cfstcyr/docker-switchboard?logo=docker" />
     </a>
