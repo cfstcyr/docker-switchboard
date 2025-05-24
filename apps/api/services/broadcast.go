@@ -76,44 +76,51 @@ func (b *BroadcastService[T]) stop() {
 	}
 }
 
+func (b *BroadcastService[T]) ExecuteNow() (T, error) {
+	clientCount := b.opts.WsService.GetClientCount()
+
+	if clientCount == 0 {
+		var zero T
+		return zero, nil
+	}
+
+	data, err := b.opts.GetData()
+
+	if err != nil {
+		log.Println("Error fetching data:", err)
+		var zero T
+		return zero, err
+	}
+
+	errs := b.opts.WsService.SendAll(models.Event{
+		Event: b.opts.EventName,
+		Data:  data,
+	})
+
+	if len(errs) > 0 {
+		for _, err := range errs {
+			log.Println("Error sending WebSocket message:", err)
+		}
+
+		var zero T
+		return zero, errs[0]
+	}
+
+	return data, nil
+}
+
 func (b *BroadcastService[T]) startBroadcast() {
 	ticker := time.NewTicker(time.Duration(b.opts.Interval) * time.Second)
 	defer ticker.Stop()
 
-	doBroadcast := func() {
-		clientCount := b.opts.WsService.GetClientCount()
-
-		if clientCount == 0 {
-			return
-		}
-
-		data, err := b.opts.GetData()
-
-		if err != nil {
-			log.Println("Error fetching data:", err)
-			return
-		}
-
-		errs := b.opts.WsService.SendAll(models.Event{
-			Event: b.opts.EventName,
-			Data:  data,
-		})
-
-		if len(errs) > 0 {
-			for _, err := range errs {
-				log.Println("Error sending WebSocket message:", err)
-			}
-		}
-	}
-
-	doBroadcast()
+	b.ExecuteNow()
 	for {
 		select {
 		case <-b.stopChan:
 			log.Println("Stopping broadcast (no clients)")
 			return
 		case <-ticker.C:
-			doBroadcast()
+			b.ExecuteNow()
 		}
 	}
 }

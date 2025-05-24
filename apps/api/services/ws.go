@@ -28,11 +28,7 @@ func NewWsService() *WsService {
 	}
 }
 
-func (h *WsService) RegisterWebsocketRoute(mux *http.ServeMux) {
-	mux.HandleFunc("/ws", h.handler())
-}
-
-func (h *WsService) handler() http.HandlerFunc {
+func (h *WsService) Handler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println("WebSocket connection established")
 		conn, err := upgrader.Upgrade(w, r, nil)

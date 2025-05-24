@@ -7,7 +7,9 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/cfstcyr/docker-switchboard/handlers"
 	"github.com/cfstcyr/docker-switchboard/models"
+	"github.com/cfstcyr/docker-switchboard/services"
 	"github.com/kelseyhightower/envconfig"
 )
 
@@ -30,9 +32,11 @@ func main() {
 
 	mux.Handle("/", http.FileServer(http.FS(content)))
 
-	container := GetContainer(&cfg)
+	container := services.GetContainer(&cfg)
 
-	container.WsService.RegisterWebsocketRoute(mux)
+	handlers.RegisterWebsocketRoute(mux, container)
+	handlers.RegisterDockerHandlers(mux, container)
+
 	container.ContainersBroadcastService.Init()
 
 	loggedMux := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
