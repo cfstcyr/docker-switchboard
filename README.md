@@ -20,7 +20,7 @@
 <p style="font-size: 18px;" align="center"><b>Quickly control your Docker containers from a simple web UI</b></p>
 
 <p align="center">
-    <img src="./assets/screenshot.png" alt="Docker Switchboard Screenshot" width="600" />
+    <img src="./assets/screenshot.webp" alt="Docker Switchboard Screenshot" width="600" />
 </p>
 
 ---
