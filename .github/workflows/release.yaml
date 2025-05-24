@@ -51,4 +51,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/docker-switchboard:${{ needs.release.outputs.version }},${{ secrets.DOCKER_HUB_USERNAME }}/docker-switchboard:latest
+          tags: cfstcyr/docker-switchboard:${{ needs.release.outputs.version }},cfstcyr/docker-switchboard:latest
