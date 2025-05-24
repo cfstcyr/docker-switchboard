@@ -64,7 +64,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - /path/to/config/app.yaml:/config/app.yaml
+      - /path/to/config/app.yaml:/config/app.yaml # Optional
       - /var/run/docker.sock:/var/run/docker.sock
 ```
 
