@@ -6,9 +6,10 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
-	"github.com/cfstcyr/docker-switchboard/handlers"
 	"github.com/cfstcyr/docker-switchboard/models"
+	"github.com/cfstcyr/docker-switchboard/services"
 	"github.com/kelseyhightower/envconfig"
 )
 
@@ -31,7 +32,17 @@ func main() {
 
 	mux.Handle("/", http.FileServer(http.FS(content)))
 
-	handlers.RegisterWebsocketRoute(mux, &cfg)
+	wsService := services.NewWsService()
+	dockerService := services.NewDockerService()
+	broadcastService := services.NewBroadcastService(services.BroadcastOptions[[]models.Container]{
+		WsService: wsService,
+		Interval:  time.Duration(cfg.RefreshInterval),
+		EventName: "containers",
+		GetData:   dockerService.RefreshContainers,
+	})
+
+	wsService.RegisterWebsocketRoute(mux)
+	broadcastService.Init()
 
 	loggedMux := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("%s %s %s", r.RemoteAddr, r.Method, r.URL.Path)
