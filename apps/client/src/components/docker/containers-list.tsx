@@ -24,34 +24,30 @@ export function ContainersList() {
     }
 
     return (
-        <div className="p-4 space-y-4 h-full">
-            <WsPortal messageProps={{ className: 'h-full w-full' }}>
-                <>
-                    <ul className="space-y-4">
-                        {containers.map((container) => (
-                            <ContainerItem
-                                key={container.id}
-                                container={container}
-                            />
-                        ))}
-                    </ul>
+        <WsPortal className="p-4 space-y-4 h-full">
+            <ul className="space-y-4">
+                {containers.map((container) => (
+                    <ContainerItem key={container.id} container={container} />
+                ))}
+            </ul>
 
-                    <div className="text-sm text-dim flex items-center justify-end space-x-2">
-                        <p>
-                            Last updated:{' '}
-                            <time dateTime={updatedOn.toISOString()}>
-                                {updatedOn.toLocaleString()}
-                            </time>
-                        </p>
-                        <button
-                            onClick={update}
-                            className="hover:text-text transition-colors"
-                        >
-                            <RefreshCcw size={16} />
-                        </button>
-                    </div>
-                </>
-            </WsPortal>
-        </div>
+            <div
+                className="text-sm text-dim flex items-center justify-end space-x-2"
+                key="updated-on"
+            >
+                <p>
+                    Last updated:{' '}
+                    <time dateTime={updatedOn.toISOString()}>
+                        {updatedOn.toLocaleString()}
+                    </time>
+                </p>
+                <button
+                    onClick={update}
+                    className="hover:text-text transition-colors"
+                >
+                    <RefreshCcw size={16} />
+                </button>
+            </div>
+        </WsPortal>
     )
 }

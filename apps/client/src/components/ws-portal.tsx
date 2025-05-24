@@ -1,53 +1,35 @@
 import { useSubjectWithState } from '@/hooks/use-subject'
 import { WebSocketService, WebSocketStatus } from '@/lib/services/ws-service'
-import clsx from 'clsx'
 import { Loader2 } from 'lucide-preact'
-import type { ComponentChildren, JSX } from 'preact'
+import { type ComponentChildren, type JSX } from 'preact'
 
-interface Props {
+type Props = {
     children: ComponentChildren
-    messageProps?: JSX.HTMLAttributes<HTMLDivElement>
-}
+} & JSX.HTMLAttributes<HTMLDivElement>
 
-export function WsPortal({
-    children,
-    messageProps: { className, ...messageProps } = {},
-}: Props) {
+export function WsPortal({ children, ...props }: Props) {
     const wsState = useSubjectWithState(WebSocketService.instance.status)
 
-    function Message({ message }: { message: ComponentChildren }) {
-        return (
-            <div
-                className={clsx(
-                    'text-dim flex items-center justify-center select-none',
-                    className
-                )}
-                {...messageProps}
-            >
-                <p>{message}</p>
-            </div>
-        )
-    }
-
-    switch (wsState) {
-        case WebSocketStatus.OPEN:
-            return <>{children}</>
-        case WebSocketStatus.CONNECTING:
-            return (
-                <Message
-                    message={
-                        <span className="flex gap-2">
-                            Connecting to WebSocket server{' '}
-                            <Loader2 className="motion-safe:animate-spin " />
-                        </span>
-                    }
-                />
-            )
-        case WebSocketStatus.CLOSED:
-            return <Message message="WebSocket connection closed" />
-        case WebSocketStatus.ERROR:
-            return <Message message="WebSocket connection error" />
-        default:
-            return <Message message="Unknown WebSocket state" />
-    }
+    return (
+        <div {...props}>
+            {wsState === WebSocketStatus.OPEN ? (
+                children
+            ) : wsState === WebSocketStatus.CONNECTING ? (
+                <p className="flex gap-2">
+                    Connecting to WebSocket server{' '}
+                    <Loader2 className="motion-safe:animate-spin " />
+                </p>
+            ) : wsState === WebSocketStatus.CLOSED ? (
+                <p className="text-dim text-center">
+                    WebSocket connection closed
+                </p>
+            ) : wsState === WebSocketStatus.ERROR ? (
+                <p className="text-dim text-center">
+                    WebSocket connection error
+                </p>
+            ) : (
+                <p className="text-dim text-center">Unknown WebSocket state</p>
+            )}
+        </div>
+    )
 }
