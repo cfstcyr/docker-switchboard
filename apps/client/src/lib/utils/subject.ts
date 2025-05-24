@@ -23,10 +23,12 @@ export class Subject<T> {
 }
 
 export class SubjectWithState<T> extends Subject<T> {
+    private initialState: T;
     private state: T;
 
     constructor(initialState: T) {
         super();
+        this.initialState = initialState;
         this.state = initialState;
     }
 
@@ -42,6 +44,11 @@ export class SubjectWithState<T> extends Subject<T> {
     emit(data: T): void {
         this.state = data;
         super.emit(data);
+    }
+
+    reset(): void {
+        this.state = this.initialState;
+        super.emit(this.state);
     }
 }
 
@@ -82,6 +89,18 @@ export class EventsSubject<T> {
     clearAll(): void {
         for (const key in this.subjects) {
             this.subjects[key].clear();
+        }
+    }
+
+    reset<K extends keyof T>(event: K): void {
+        if (this.subjects[event]) {
+            this.subjects[event].reset();
+        }
+    }
+
+    resetAll(): void {
+        for (const key in this.subjects) {
+            this.subjects[key].reset();
         }
     }
 }

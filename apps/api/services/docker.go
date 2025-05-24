@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"log"
 	"sync"
 
 	"github.com/cfstcyr/docker-switchboard/models"
@@ -21,6 +22,44 @@ func NewDockerService() *DockerService {
 	}
 }
 
+func StartContainer(containerID string) error {
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+
+	if err != nil {
+		return err
+	}
+
+	cli.NegotiateAPIVersion(ctx)
+	err = cli.ContainerStart(ctx, containerID, container.StartOptions{})
+
+	if err != nil {
+		return err
+	}
+
+	log.Printf("Container %s started\n", containerID)
+
+	return nil
+}
+
+func StopContainer(containerID string) error {
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
+
+	if err != nil {
+		return err
+	}
+
+	cli.NegotiateAPIVersion(ctx)
+	err = cli.ContainerStop(ctx, containerID, container.StopOptions{})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func mapContainers(containers []container.Summary) []models.Container {
 	mappedContainers := make([]models.Container, len(containers))
 
@@ -33,7 +72,7 @@ func mapContainers(containers []container.Summary) []models.Container {
 	return mappedContainers
 }
 
-func (d *DockerService) getRunningContainers() ([]container.Summary, error) {
+func (d *DockerService) getContainers() ([]container.Summary, error) {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 
@@ -56,7 +95,7 @@ func (d *DockerService) GetContainers(forceUpdate bool) ([]models.Container, err
 	defer d.lastContainersLock.Unlock()
 
 	if d.lastContainers == nil || forceUpdate {
-		containers, err := d.getRunningContainers()
+		containers, err := d.getContainers()
 		if err != nil {
 			return nil, err
 		}

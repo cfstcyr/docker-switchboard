@@ -111,7 +111,10 @@ func (b *BroadcastService[T]) executeNow() (T, error) {
 }
 
 func (b *BroadcastService[T]) ExecuteNow() (T, error) {
-	b.ticker.Reset(time.Duration(b.opts.Interval) * time.Second)
+	log.Println("Executing broadcast immediately")
+	if b.ticker != nil {
+		b.ticker.Reset(time.Duration(b.opts.Interval) * time.Second)
+	}
 	return b.executeNow()
 }
 

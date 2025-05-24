@@ -1,49 +1,60 @@
 import type { DockerContainer } from "../types/docker";
 import { SingletonBase } from "../utils/singleton";
-import { EventsSubject, type SubjectCallback } from "../utils/subject";
+import { EventsSubject, SubjectWithState, type SubjectCallback } from "../utils/subject";
 import { APIService } from "./api-service";
 
 interface WebSocketEvents {
     containers: DockerContainer[];
 }
 
-enum WebSocketStatus {
+export enum WebSocketStatus {
     CONNECTING = "CONNECTING",
     OPEN = "OPEN",
     CLOSED = "CLOSED",
+    ERROR = "ERROR",
 }
 
 export class WebSocketService extends SingletonBase<WebSocketService>() {
     readonly events = new EventsSubject<WebSocketEvents>({
         containers: [],
     });
-    private status: WebSocketStatus = WebSocketStatus.CLOSED;
+    readonly status = new SubjectWithState<WebSocketStatus>(WebSocketStatus.CLOSED);
+
+    private reconnectAttempts = 0;
+    private readonly maxReconnectAttempts = 15;
+    private readonly reconnectDelay = 1000; // ms
+    private ws?: WebSocket;
 
     private constructor() {
         super();
     }
 
     init() {
-        if (this.status === WebSocketStatus.OPEN) {
+        if (this.status.getState() === WebSocketStatus.OPEN) {
             console.warn("WebSocket connection already established");
             return;
         }
-        if (this.status === WebSocketStatus.CONNECTING) {
+        if (this.status.getState() === WebSocketStatus.CONNECTING) {
             console.warn("WebSocket connection is already in progress");
             return;
         }
-        
-        this.status = WebSocketStatus.CONNECTING;
+
+        this.connect();
+    }
+
+    private connect() {
+        this.status.emit(WebSocketStatus.CONNECTING);
         console.debug("Connecting to WebSocket server...");
 
-        const ws = new WebSocket(APIService.instance.url("/ws"));
+        this.ws = new WebSocket(APIService.instance.url("/ws"));
 
-        ws.onopen = () => {
-            this.status = WebSocketStatus.OPEN;
+        this.ws.onopen = () => {
+            this.status.emit(WebSocketStatus.OPEN);
+            this.reconnectAttempts = 0;
             console.debug("WebSocket connection opened");
         };
 
-        ws.onmessage = (event) => {
+        this.ws.onmessage = (event) => {
             const message = this.parseWebSocketMessage(event);
 
             if (message) {
@@ -52,10 +63,31 @@ export class WebSocketService extends SingletonBase<WebSocketService>() {
             }
         };
 
-        ws.onclose = () => {
-            this.status = WebSocketStatus.CLOSED;
+        this.ws.onclose = () => {
+            this.status.emit(WebSocketStatus.CLOSED);
+            this.events.resetAll();
             console.debug("WebSocket connection closed");
+            this.tryReconnect();
         };
+
+        this.ws.onerror = (err) => {
+            console.error("WebSocket error:", err);
+            this.ws?.close();
+        };
+    }
+
+    private tryReconnect() {
+        this.status.emit(WebSocketStatus.CONNECTING);
+        if (this.reconnectAttempts < this.maxReconnectAttempts) {
+            this.reconnectAttempts++;
+            console.debug(`Reconnecting in ${this.reconnectDelay}ms (attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+            setTimeout(() => {
+                this.connect();
+            }, this.reconnectDelay);
+        } else {
+            this.status.emit(WebSocketStatus.ERROR);
+            console.error("Max WebSocket reconnect attempts reached.");
+        }
     }
 
     private parseWebSocketMessage(event: MessageEvent) {
