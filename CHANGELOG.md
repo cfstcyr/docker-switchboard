@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/cfstcyr/docker-switchboard/compare/v1.0.0...v1.0.1) (2025-05-24)
+
+
+### Bug Fixes
+
+* update API URL environment variable and add type definitions ([c80ff60](https://github.com/cfstcyr/docker-switchboard/commit/c80ff6061b04e036896fe7150e246c8dd6dadbf0))
+
 # 1.0.0 (2025-05-24)
 
 
