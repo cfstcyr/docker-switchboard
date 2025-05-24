@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/cfstcyr/docker-switchboard/compare/v1.0.0...v1.0.1) (2025-05-24)
+
+
+### Bug Fixes
+
+* update Docker image tags to use hardcoded username ([526c0c4](https://github.com/cfstcyr/docker-switchboard/commit/526c0c484cf1c1d98b7b3f71c4f69a8e699e8c02))
+
 # 1.0.0 (2025-05-24)
 
 
