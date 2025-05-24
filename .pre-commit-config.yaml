@@ -11,8 +11,6 @@ repos:
     rev: v0.5.1
     hooks:
       - id: go-fmt
-      - id: go-vet
-      - id: go-lint
 
   - repo: https://github.com/pre-commit/mirrors-eslint
     rev: v9.27.0

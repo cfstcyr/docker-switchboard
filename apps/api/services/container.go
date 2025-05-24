@@ -18,10 +18,10 @@ var (
 	once     sync.Once
 )
 
-func GetContainer(cfg *models.Config) *Container {
+func GetContainer(cfg *models.AppConfig) *Container {
 	once.Do(func() {
 		wsService := NewWsService()
-		dockerService := NewDockerService()
+		dockerService := NewDockerService(cfg)
 		broadcastService := NewBroadcastService(BroadcastOptions[[]models.Container]{
 			WsService: wsService,
 			Interval:  time.Duration(cfg.RefreshInterval),

@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"log"
+	"regexp"
 	"sync"
 
 	"github.com/cfstcyr/docker-switchboard/models"
@@ -11,12 +12,14 @@ import (
 )
 
 type DockerService struct {
+	cfg                *models.AppConfig
 	lastContainers     []container.Summary
 	lastContainersLock sync.Mutex
 }
 
-func NewDockerService() *DockerService {
+func NewDockerService(cfg *models.AppConfig) *DockerService {
 	return &DockerService{
+		cfg:                cfg,
 		lastContainers:     nil,
 		lastContainersLock: sync.Mutex{},
 	}
@@ -65,6 +68,7 @@ func mapContainers(containers []container.Summary) []models.Container {
 
 	for i, s := range containers {
 		if container, err := models.FromSummary(s); err == nil {
+
 			mappedContainers[i] = container
 		}
 	}
@@ -90,6 +94,18 @@ func (d *DockerService) getContainers() ([]container.Summary, error) {
 	return containers, nil
 }
 
+func (d *DockerService) filterContainers(containers []models.Container) []models.Container {
+	filtered := make([]models.Container, 0, len(containers))
+
+	for _, c := range containers {
+		if d.cfg.ContainerMatch == "" || regexp.MustCompile(d.cfg.ContainerMatch).MatchString(c.Name) {
+			filtered = append(filtered, c)
+		}
+	}
+
+	return filtered[:len(filtered):len(filtered)]
+}
+
 func (d *DockerService) GetContainers(forceUpdate bool) ([]models.Container, error) {
 	d.lastContainersLock.Lock()
 	defer d.lastContainersLock.Unlock()
@@ -102,7 +118,7 @@ func (d *DockerService) GetContainers(forceUpdate bool) ([]models.Container, err
 		d.lastContainers = containers
 	}
 
-	return mapContainers(d.lastContainers), nil
+	return d.filterContainers(mapContainers(d.lastContainers)), nil
 }
 
 func (d *DockerService) RefreshContainers() ([]models.Container, error) {

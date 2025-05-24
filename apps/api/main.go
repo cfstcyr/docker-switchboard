@@ -10,6 +10,7 @@ import (
 	"github.com/cfstcyr/docker-switchboard/handlers"
 	"github.com/cfstcyr/docker-switchboard/models"
 	"github.com/cfstcyr/docker-switchboard/services"
+	"github.com/cfstcyr/docker-switchboard/utils"
 	"github.com/kelseyhightower/envconfig"
 )
 
@@ -17,10 +18,17 @@ import (
 var embeddedFiles embed.FS
 
 func main() {
-	var cfg models.Config
+	var cfg models.EnvConfig
 	err := envconfig.Process("", &cfg)
 	if err != nil {
 		log.Fatal(err)
+		return
+	}
+
+	var appCfg models.AppConfig
+	if err = utils.LoadAppConfig(&cfg, &appCfg); err != nil {
+		log.Fatal(err)
+		return
 	}
 
 	content, err := fs.Sub(embeddedFiles, "static")
@@ -32,7 +40,7 @@ func main() {
 
 	mux.Handle("/", http.FileServer(http.FS(content)))
 
-	container := services.GetContainer(&cfg)
+	container := services.GetContainer(&appCfg)
 
 	handlers.RegisterWebsocketRoute(mux, container)
 	handlers.RegisterDockerHandlers(mux, container)
