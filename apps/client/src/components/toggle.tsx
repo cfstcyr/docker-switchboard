@@ -1,19 +1,18 @@
-import clsx from "clsx";
-import type { JSX } from "preact";
+import clsx from 'clsx'
+import type { JSX } from 'preact'
 
 type Props = JSX.HTMLAttributes<HTMLDivElement> & {
-    checked: boolean;
+    checked: boolean
 }
 
 export function Toggle({ checked, className, ...props }: Props) {
     return (
         <div
-            class={clsx("toggle", className)} {...props}
+            className={clsx('toggle', className)}
+            {...props}
             data-checked={checked}
         >
-            <div
-                class="toggle-thumb"
-            ></div>
+            <div className="toggle-thumb"></div>
         </div>
-    );
+    )
 }

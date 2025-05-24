@@ -1,0 +1,30 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+
+  - repo: https://github.com/dnephin/pre-commit-golang
+    rev: v0.5.1
+    hooks:
+      - id: go-fmt
+      - id: go-vet
+      - id: go-lint
+
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v9.27.0
+    hooks:
+      - id: eslint
+        additional_dependencies: ['eslint']
+        entry: pnpm eslint --fix
+  - repo: local
+    hooks:
+      - id: commitlint
+        name: commitlint
+        entry: bash -c 'npx --no -- commitlint --edit "$1"'
+        language: system
+        stages: [commit-msg]
+        pass_filenames: false

@@ -1,24 +1,24 @@
 ---
-import Background from '@/components/background.astro';
-import '../styles/global.css';
+import Background from '@/components/background.astro'
+import '../styles/global.css'
 
-const title = import.meta.env.SITE_TITLE ?? 'Switchboard';
+const title = import.meta.env.SITE_TITLE ?? 'Switchboard'
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<link rel="preload" href="/noise.svg" as="image" />
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="generator" content={Astro.generator} />
+        <link rel="preload" href="/noise.svg" as="image" />
 
-		<title>{title}</title>
+        <title>{title}</title>
 
         <slot name="head" />
-	</head>
-	<body>
-		<slot />
-		<Background />
-	</body>
+    </head>
+    <body>
+        <slot />
+        <Background />
+    </body>
 </html>

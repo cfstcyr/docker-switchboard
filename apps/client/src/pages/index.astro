@@ -8,7 +8,6 @@ import Layout from "../layouts/layout.astro"
 </Layout>
 
 <script>
-    import { WebSocketService } from '@/lib/services/ws-service';
-    
+    import {WebSocketService} from '@/lib/services/ws-service';
     WebSocketService.instance.init()
 </script>
