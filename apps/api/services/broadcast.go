@@ -18,6 +18,7 @@ type BroadcastService[T any] struct {
 	opts      BroadcastOptions[T]
 	isRunning bool
 	stopChan  chan struct{}
+	ticker    *time.Ticker
 }
 
 func NewBroadcastService[T any](opts BroadcastOptions[T]) *BroadcastService[T] {
@@ -76,7 +77,7 @@ func (b *BroadcastService[T]) stop() {
 	}
 }
 
-func (b *BroadcastService[T]) ExecuteNow() (T, error) {
+func (b *BroadcastService[T]) executeNow() (T, error) {
 	clientCount := b.opts.WsService.GetClientCount()
 
 	if clientCount == 0 {
@@ -109,19 +110,24 @@ func (b *BroadcastService[T]) ExecuteNow() (T, error) {
 	return data, nil
 }
 
+func (b *BroadcastService[T]) ExecuteNow() (T, error) {
+	b.ticker.Reset(time.Duration(b.opts.Interval) * time.Second)
+	return b.executeNow()
+}
+
 func (b *BroadcastService[T]) startBroadcast() {
-	ticker := time.NewTicker(time.Duration(b.opts.Interval) * time.Second)
-	defer ticker.Stop()
+	b.ticker = time.NewTicker(time.Duration(b.opts.Interval) * time.Second)
+	defer b.ticker.Stop()
 
 	log.Println("Starting broadcast with interval:", b.opts.Interval)
-	b.ExecuteNow()
+	b.executeNow()
 	for {
 		select {
 		case <-b.stopChan:
 			log.Println("Stopping broadcast (no clients)")
 			return
-		case <-ticker.C:
-			b.ExecuteNow()
+		case <-b.ticker.C:
+			b.executeNow()
 		}
 	}
 }
