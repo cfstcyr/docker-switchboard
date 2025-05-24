@@ -4,6 +4,7 @@
   --primary: oklch(39.1% 0.09 240.876);
   --background: oklch(21% 0.034 264.665);
   --text: oklch(98.5% 0.002 247.839);
+  --dim: oklch(44.6% 0.03 256.802);
   --card: oklch(98.5% 0.002 247.839);
 }
 
@@ -11,6 +12,7 @@
   --color-primary: var(--primary);
   --color-background: var(--background);
   --color-text: var(--text);
+  --color-dim: var(--dim);
   --color-card: var(--card);
 }
 

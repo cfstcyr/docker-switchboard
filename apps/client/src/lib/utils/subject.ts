@@ -23,16 +23,19 @@ export class Subject<T> {
 }
 
 export class SubjectWithState<T> extends Subject<T> {
-    private state: T | undefined;
+    private state: T;
 
-    getState(): T | undefined {
+    constructor(initialState: T) {
+        super();
+        this.state = initialState;
+    }
+
+    getState(): T {
         return this.state;
     }
 
     subscribe(observer: SubjectCallback<T>): void {
-        if (this.state !== undefined) {
-            observer(this.state);
-        }
+        observer(this.state);
         super.subscribe(observer);
     }
 
@@ -43,11 +46,16 @@ export class SubjectWithState<T> extends Subject<T> {
 }
 
 export class EventsSubject<T> {
+    readonly initialState: T;
     private subjects: { [K in keyof T]: SubjectWithState<T[K]> } = {} as { [K in keyof T]: SubjectWithState<T[K]> };
+    
+    constructor(initialState: T) {
+        this.initialState = initialState;
+    }
 
     subscribe<K extends keyof T>(event: K, observer: SubjectCallback<T[K]>): void {
         if (!this.subjects[event]) {
-            this.subjects[event] = new SubjectWithState<T[K]>();
+            this.subjects[event] = new SubjectWithState<T[K]>(this.initialState[event]);
         }
         this.subjects[event].subscribe(observer);
     }
@@ -60,7 +68,7 @@ export class EventsSubject<T> {
 
     emit<K extends keyof T>(event: K, data: T[K]): void {
         if (!this.subjects[event]) {
-            this.subjects[event] = new SubjectWithState<T[K]>();
+            this.subjects[event] = new SubjectWithState<T[K]>(this.initialState[event]);
         }
         this.subjects[event].emit(data);
     }

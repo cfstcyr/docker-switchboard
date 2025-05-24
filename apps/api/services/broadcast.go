@@ -113,6 +113,7 @@ func (b *BroadcastService[T]) startBroadcast() {
 	ticker := time.NewTicker(time.Duration(b.opts.Interval) * time.Second)
 	defer ticker.Stop()
 
+	log.Println("Starting broadcast with interval:", b.opts.Interval)
 	b.ExecuteNow()
 	for {
 		select {

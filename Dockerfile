@@ -4,6 +4,7 @@ WORKDIR /app
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
+ENV VITE_API_URL="/api"
 RUN corepack enable
 
 COPY ./apps/client/package.json ./apps/client/pnpm-lock.yaml ./

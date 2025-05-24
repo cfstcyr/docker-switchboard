@@ -8,7 +8,7 @@ import (
 )
 
 func RegisterDockerHandlers(mux *http.ServeMux, container *services.Container) {
-	mux.HandleFunc("/api/containers", containersHandler(container))
+	mux.HandleFunc("/api/docker/containers/update", containersHandler(container))
 }
 
 func containersHandler(container *services.Container) http.HandlerFunc {
