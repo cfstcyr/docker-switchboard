@@ -30,10 +30,13 @@ export function ContainerItem({ container }: Props) {
     }, [container.id, container.state])
 
     return (
-        <li
-            className="container-item group/docker-container"
+        <button
+            className="container-item group/docker-container w-full text-left disabled:pointer-events-none data-[loading=true]:opacity-70 transition-opacity"
+            onClick={handleClick}
+            disabled={loading}
             data-state={container.state}
             data-loading={loading}
+            data-running={container.state === 'running'}
         >
             <div
                 style={{ gridArea: 'status' }}
@@ -54,25 +57,16 @@ export function ContainerItem({ container }: Props) {
             </div>
             <h3
                 style={{ gridArea: 'title' }}
-                className="overflow-hidden text-ellipsis"
+                className="overflow-hidden text-ellipsis group-data-[running=false]/docker-container:text-dim"
             >
                 {container.name}
             </h3>
-            {/* <p
-                style={{gridArea: 'subtitle'}}
-                class="text-xs opacity-55 overflow-hidden text-ellipsis flex items-center gap-1"
+            <div
+                style={{ gridArea: 'actions' }}
+                className="h-full flex items-center"
             >
-                <CopyButton text={container.id} size={12}>{container.id}</CopyButton>
-            </p> */}
-            <div style={{ gridArea: 'actions' }} className="h-full">
-                <button
-                    className="glass h-full min-h-10 p-2 disabled:pointer-events-none group-data-[loading=true]/docker-container:opacity-55"
-                    onClick={handleClick}
-                    disabled={loading}
-                >
-                    <Toggle checked={container.state === 'running'} />
-                </button>
+                <Toggle checked={container.state === 'running'} />
             </div>
-        </li>
+        </button>
     )
 }

@@ -24,29 +24,34 @@ export function ContainersList() {
     }
 
     return (
-        <WsPortal className="p-4 space-y-4 h-full">
-            <ul className="space-y-4">
-                {containers.map((container) => (
-                    <ContainerItem key={container.id} container={container} />
-                ))}
-            </ul>
+        <WsPortal className="px-4 py-12 pb-12 h-full">
+            <div className="max-w-md mx-auto space-y-4">
+                <div className="space-y-4">
+                    {containers.map((container) => (
+                        <ContainerItem
+                            key={container.id}
+                            container={container}
+                        />
+                    ))}
+                </div>
 
-            <div
-                className="text-sm text-dim flex items-center justify-end space-x-2"
-                key="updated-on"
-            >
-                <p>
-                    Last updated:{' '}
-                    <time dateTime={updatedOn.toISOString()}>
-                        {updatedOn.toLocaleString()}
-                    </time>
-                </p>
-                <button
-                    onClick={update}
-                    className="hover:text-text transition-colors"
+                <div
+                    className="text-sm text-dim flex items-center justify-end space-x-2"
+                    key="updated-on"
                 >
-                    <RefreshCcw size={16} />
-                </button>
+                    <p>
+                        Last updated:{' '}
+                        <time dateTime={updatedOn.toISOString()}>
+                            {updatedOn.toLocaleString()}
+                        </time>
+                    </p>
+                    <button
+                        onClick={update}
+                        className="hover:text-text transition-colors"
+                    >
+                        <RefreshCcw size={16} />
+                    </button>
+                </div>
             </div>
         </WsPortal>
     )
