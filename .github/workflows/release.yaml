@@ -10,6 +10,8 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
 
     steps:
       - name: Checkout repository
