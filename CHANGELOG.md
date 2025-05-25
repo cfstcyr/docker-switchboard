@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/cfstcyr/docker-switchboard/compare/v1.1.0...v1.2.0) (2025-05-25)
+
+
+### Features
+
+* add QEMU setup for multi-platform Docker builds ([1572a78](https://github.com/cfstcyr/docker-switchboard/commit/1572a78d2bed9885638d3ab1979e23375e989125))
+
 # [1.1.0](https://github.com/cfstcyr/docker-switchboard/compare/v1.0.1...v1.1.0) (2025-05-24)
 
 
